@@ -1,1050 +1,925 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OvO — Mint bead art. Wear what you make.</title>
-  <meta name="description" content="Neon-green HUD meets bead-grid craft: mint digital bead art, inscribe meaning, gift it forward, and wear it on your OvO card." />
+  <title data-i18n="pageTitle">OvO — Create it. Keep it. Gift it.</title>
+  <meta name="description" data-i18n="metaDescription" content="OvO is a bead art app where your work becomes something you can mint, keep, show, and gift forward." />
+  <link rel="icon" type="image/png" href="assets/OvO_Icon_1024-fa43e3f6-d833-46f9-88c3-7e661bb48115.png" />
+  <link rel="apple-touch-icon" href="assets/OvO_Icon_1024-fa43e3f6-d833-46f9-88c3-7e661bb48115.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
     :root {
-      --void: #050608;
-      --panel: #050B1A;
-      --neon: #B6FF32;
-      --neon-dim: rgba(182, 255, 50, 0.35);
-      --klein: #1e3a5f;
-      --cyan: #3dffec;
-      --text: #e8f0ea;
-      --muted: rgba(232, 240, 234, 0.55);
+      --bg-page: #F7FBF6;
+      --bg-panel: #EEF6EC;
+      --text: #1F3A2E;
+      --text-secondary: #5D7467;
+      --accent: #A6E244;
+      --accent-dark: #5F8F2D;
+      --border: #D8E8D6;
+      --glow: rgba(166, 226, 68, 0.18);
+      --card: #ffffff;
+      --shadow: 0 18px 50px rgba(31, 58, 46, 0.08);
+      --shadow-soft: 0 10px 30px rgba(31, 58, 46, 0.06);
       --radius-lg: 22px;
       --radius-md: 14px;
-      --font: "Barlow Condensed", system-ui, sans-serif;
+      --radius-pill: 999px;
+      --font-sans: "DM Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+      --font-display: "Cormorant Garamond", "Songti SC", "Noto Serif SC", Georgia, serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #050608;
+      --bg-panel: #0a1018;
+      --text: #e8f0ea;
+      --text-secondary: rgba(232, 240, 234, 0.62);
+      --accent: #B6FF32;
+      --accent-dark: #8fe019;
+      --border: rgba(182, 255, 50, 0.22);
+      --glow: rgba(182, 255, 50, 0.14);
+      --card: rgba(10, 16, 24, 0.92);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      --shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.35);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: auto; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: var(--font);
-      background: var(--void);
+      font-family: var(--font-sans);
+      background: var(--bg-page);
       color: var(--text);
-      font-weight: 300;
-      letter-spacing: 0.04em;
-      line-height: 1.45;
+      font-weight: 400;
+      line-height: 1.55;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.35s ease, color 0.35s ease;
     }
 
-    a { color: var(--neon); text-decoration: none; }
-    a:hover { text-decoration: underline; text-underline-offset: 4px; }
+    a { color: var(--accent-dark); text-decoration: none; }
+    [data-theme="dark"] a { color: var(--accent); }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-    .grain {
-      pointer-events: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      opacity: 0.04;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 1.35rem; }
+
+    h1, h2, .display {
+      font-family: var(--font-display);
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      line-height: 1.08;
     }
 
-    .hud-line {
-      position: fixed;
-      left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--neon-dim), transparent);
-      z-index: 100;
-      pointer-events: none;
-      opacity: 0.5;
-    }
-    .hud-line.top { top: 0; }
-    .hud-line.bottom { bottom: 0; }
-
-    .wrap {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
+    h1 { font-size: clamp(2.35rem, 5.2vw, 3.55rem); font-style: italic; }
+    h2 { font-size: clamp(1.85rem, 3.6vw, 2.65rem); font-style: italic; }
+    h3 { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.02em; }
 
     .eyebrow {
       font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      letter-spacing: 0.28em;
-      color: var(--neon);
-      font-weight: 500;
+      color: var(--accent-dark);
     }
+    [data-theme="dark"] .eyebrow { color: var(--accent); }
 
-    h1, h2, h3 {
-      font-weight: 400;
-      letter-spacing: 0.02em;
-      line-height: 1.05;
-    }
+    .muted { color: var(--text-secondary); }
 
-    h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); font-style: italic; font-weight: 300; }
-    h2 { font-size: clamp(1.85rem, 4vw, 2.75rem); font-style: italic; font-weight: 300; }
-    h3 { font-size: 1.15rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
-
-    p.lead { font-size: 1.15rem; color: var(--muted); max-width: 36ch; }
-
-    /* Nav */
     .site-nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      z-index: 900;
-      padding: 1rem 1.5rem;
+      z-index: 1000;
+      padding: 0.85rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: linear-gradient(180deg, rgba(5,6,8,0.95) 0%, rgba(5,6,8,0) 100%);
-      backdrop-filter: blur(8px);
-    }
-    .logo {
-      font-size: 1.35rem;
-      font-weight: 600;
-      font-style: italic;
-      letter-spacing: 0.12em;
-      color: var(--neon);
-      text-shadow: 0 0 24px var(--neon-dim);
-    }
-    .nav-links {
-      display: flex;
-      gap: 1.25rem;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-    .nav-links a { color: var(--muted); transition: color 0.2s; }
-    .nav-links a:hover { color: var(--neon); text-decoration: none; }
-
-    /* Sections base */
-    section {
-      position: relative;
-      padding: clamp(4rem, 12vh, 7rem) 0;
+      gap: 1rem;
+      background: color-mix(in srgb, var(--bg-page) 88%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    .section-pin {
-      min-height: 100vh;
+    .brand {
       display: flex;
       align-items: center;
+      gap: 0.55rem;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+    .brand img {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      box-shadow: 0 0 0 1px var(--border), 0 8px 24px var(--glow);
     }
 
-    /* HUD Card */
-    .hud-card {
-      background: linear-gradient(145deg, rgba(5,11,26,0.95) 0%, rgba(5,6,8,0.88) 100%);
-      border: 1px solid rgba(182, 255, 50, 0.18);
-      border-radius: var(--radius-lg);
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,0.03) inset,
-        0 24px 80px rgba(0,0,0,0.55),
-        0 0 60px rgba(182, 255, 50, 0.06);
-      position: relative;
-      overflow: hidden;
+    .nav-main {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
-    .hud-card::before {
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.2rem 0;
+    }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    .pill-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--bg-panel) 70%, transparent);
+    }
+
+    .pill-btn {
+      border: none;
+      background: transparent;
+      font: inherit;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .pill-btn[aria-pressed="true"] {
+      background: var(--card);
+      color: var(--text);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .icon-btn {
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      box-shadow: var(--shadow-soft);
+    }
+    .icon-btn:hover { transform: translateY(-1px); }
+
+    section { position: relative; padding: clamp(3.5rem, 10vh, 6rem) 0; }
+
+    .panel-section { background: var(--bg-panel); }
+
+    .card-surface {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+    .card-surface::after {
       content: "";
+      pointer-events: none;
       position: absolute;
       inset: 0;
       border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(182,255,50,0.25), transparent 40%, transparent 60%, rgba(62,255,236,0.08));
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent) inset;
+      opacity: 0.9;
     }
 
-    .corner-bracket {
-      position: absolute;
-      width: 12px; height: 12px;
-      border-color: var(--neon);
-      border-style: solid;
-      opacity: 0.5;
-      pointer-events: none;
+    .device-shot {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
     }
-    .corner-bracket.tl { top: 10px; left: 10px; border-width: 1px 0 0 1px; }
-    .corner-bracket.tr { top: 10px; right: 10px; border-width: 1px 1px 0 0; }
-    .corner-bracket.bl { bottom: 10px; left: 10px; border-width: 0 0 1px 1px; }
-    .corner-bracket.br { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
 
-    /* Hero */
-    #hero {
-      padding-top: 6rem;
-      min-height: 100vh;
+    .hero {
+      padding-top: 5.5rem;
+      min-height: min(100vh, 920px);
+      display: flex;
+      align-items: center;
     }
     .hero-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2.5rem;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: clamp(1.75rem, 4vw, 3rem);
       align-items: center;
     }
     @media (max-width: 900px) {
       .hero-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
     }
 
-    .black-card-mock {
-      aspect-ratio: 3/4;
-      max-height: 520px;
-      margin: 0 auto;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-    }
-    .black-card-mock .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-    .black-card-mock .showcase-strip {
-      flex: 1;
-      border-radius: var(--radius-md);
-      background: repeating-linear-gradient(
-        90deg,
-        rgba(182,255,50,0.03) 0px,
-        rgba(182,255,50,0.03) 1px,
-        transparent 1px,
-        transparent 24px
-      ),
-      linear-gradient(180deg, rgba(30,58,95,0.4), rgba(5,6,8,0.9));
-      border: 1px solid rgba(182,255,50,0.12);
+    .hero-visual-wrap {
       position: relative;
-      overflow: hidden;
+      max-width: 380px;
+      margin: 0 auto;
     }
-    .showcase-dots {
+    .hero-glow {
       position: absolute;
-      bottom: 12px; left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
+      inset: -12% -8%;
+      background: radial-gradient(circle at 40% 35%, var(--glow), transparent 55%);
+      filter: blur(8px);
+      z-index: 0;
     }
-    .showcase-dots span {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--neon);
-      opacity: 0.35;
-    }
-    .showcase-dots span.active { opacity: 1; box-shadow: 0 0 8px var(--neon); }
-    .badge-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-    }
-    .badge-pill {
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(182,255,50,0.25);
-      color: var(--neon);
-      background: rgba(182,255,50,0.06);
+    .hero-phone {
+      position: relative;
+      z-index: 1;
+      padding: 0.65rem;
     }
 
-    .hero-copy h1 { margin-bottom: 1rem; }
-    .hero-copy .sub {
-      font-size: 1.05rem;
-      color: var(--muted);
-      font-style: italic;
-      max-width: 32ch;
-      margin-bottom: 2rem;
-    }
-    .cta-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.35rem; }
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      padding: 0.85rem 1.6rem;
-      border-radius: 999px;
-      font-family: var(--font);
-      font-size: 0.85rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      font-weight: 500;
-      cursor: pointer;
+      gap: 0.45rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.92rem;
+      font-weight: 600;
       border: 1px solid transparent;
-      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
     }
     .btn-primary {
-      background: var(--neon);
-      color: var(--void);
-      box-shadow: 0 0 40px rgba(182,255,50,0.25);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 56px rgba(182,255,50,0.4); text-decoration: none; }
-    .btn-ghost {
-      background: transparent;
-      border-color: rgba(182,255,50,0.35);
-      color: var(--neon);
-    }
-    .btn-ghost:hover { border-color: var(--neon); text-decoration: none; }
-
-    /* Create */
-    #create .split-sticky {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      min-height: 85vh;
-      align-items: stretch;
-    }
-    @media (max-width: 800px) {
-      #create .split-sticky { grid-template-columns: 1fr; min-height: auto; }
-    }
-    .mode-card {
-      padding: 2rem;
-      min-height: 380px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .mode-card.cyber {
-      background: radial-gradient(ellipse at 30% 20%, rgba(182,255,50,0.12), transparent 50%), var(--panel);
-    }
-    .mode-card.perler {
-      background: radial-gradient(ellipse at 70% 80%, rgba(62,255,236,0.08), transparent 45%), var(--panel);
-    }
-    .mode-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-    }
-    .mode-card.cyber .mode-label { color: var(--neon); }
-    .mode-card.perler .mode-label { color: var(--cyan); }
-    .mini-grid {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 3px;
-      margin: 1.25rem 0;
-      max-width: 200px;
-    }
-    .mini-grid span {
-      aspect-ratio: 1;
-      border-radius: 3px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    .mini-grid.cyber span:nth-child(3n) { background: rgba(182,255,50,0.35); box-shadow: 0 0 8px rgba(182,255,50,0.3); }
-    .mini-grid.perler span { background: rgba(62,255,236,0.15); }
-
-    /* Inscription */
-    #inscription .mint-sheet {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 2.5rem 2rem;
-    }
-    .mint-sheet h2 { margin-bottom: 0.5rem; text-align: center; }
-    .mint-sheet .hint {
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 1.5rem;
-    }
-    .field {
-      margin-bottom: 1.25rem;
-    }
-    .field label {
-      display: block;
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
-    }
-    .field textarea {
-      width: 100%;
-      min-height: 100px;
-      background: rgba(5,6,8,0.6);
-      border: 1px solid rgba(182,255,50,0.2);
-      border-radius: 12px;
-      padding: 1rem;
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 1rem;
-      resize: none;
-    }
-    .char-count {
-      text-align: right;
-      font-size: 0.72rem;
-      color: var(--neon);
-      margin-top: 0.35rem;
-      letter-spacing: 0.1em;
-    }
-    .pull-quote {
-      margin-top: 2rem;
-      padding: 1rem 1.25rem;
-      border-left: 2px solid var(--neon);
-      font-style: italic;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    /* Mint states */
-    #mint .mint-stage {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2rem;
-    }
-    .status-track {
-      display: flex;
-      gap: 0;
-      align-items: stretch;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .status-node {
-      padding: 1rem 1.75rem;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(5,11,26,0.5);
-      font-size: 0.75rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      position: relative;
-      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
-    }
-    .status-node.active {
-      border-color: var(--neon);
-      background: rgba(182,255,50,0.08);
-      box-shadow: 0 0 32px rgba(182,255,50,0.15);
-      color: var(--neon);
-    }
-    .status-node::after {
-      content: "";
-      position: absolute;
-      right: -24px;
-      top: 50%;
-      width: 24px;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(182,255,50,0.4), transparent);
-      display: none;
-    }
-    @media (min-width: 700px) {
-      .status-node:not(:last-child)::after { display: block; }
-    }
-    .mint-copy { text-align: center; max-width: 42ch; color: var(--muted); }
-
-    /* Gift */
-    #gift .gift-timeline {
-      position: relative;
-      padding: 2rem 0 4rem;
-    }
-    .gift-steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-    @media (max-width: 900px) {
-      .gift-steps { grid-template-columns: 1fr 1fr; }
-    }
-    .gift-step {
-      padding: 1.25rem;
-      border-radius: var(--radius-md);
-      background: var(--panel);
-      border: 1px solid rgba(255,255,255,0.06);
-      font-size: 0.88rem;
-      color: var(--muted);
-      position: relative;
-    }
-    .gift-step .step-num {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      color: var(--neon);
-      margin-bottom: 0.5rem;
-    }
-    .gift-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-weight: 500; }
-    .provenance {
-      margin-top: 3rem;
-      padding: 1.5rem;
-      border-radius: var(--radius-md);
-      background: rgba(5,11,26,0.6);
-      border: 1px dashed rgba(182,255,50,0.2);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      justify-content: space-around;
-      font-size: 0.85rem;
-    }
-    .provenance div span { display: block; font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; }
-    .provenance div em { color: var(--neon); font-style: italic; }
-
-    /* Identity */
-    #identity .id-layout {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 2.5rem;
-      align-items: center;
-    }
-    @media (max-width: 900px) {
-      #identity .id-layout { grid-template-columns: 1fr; }
-    }
-    .showcase-carousel-mock {
-      height: 180px;
-      border-radius: var(--radius-md);
-      background: linear-gradient(90deg, rgba(182,255,50,0.08), transparent 30%, transparent 70%, rgba(62,255,236,0.06));
-      border: 1px solid rgba(182,255,50,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .badge-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-top: 1.25rem;
-    }
-    .badge-grid .b {
-      aspect-ratio: 1;
-      border-radius: 10px;
-      border: 1px solid rgba(182,255,50,0.2);
-      background: radial-gradient(circle at 30% 30%, rgba(182,255,50,0.15), transparent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.55rem;
-      letter-spacing: 0.08em;
-      text-align: center;
-      padding: 4px;
-      color: var(--muted);
-    }
-    .badge-grid .b.highlight {
-      border-color: var(--neon);
-      color: var(--neon);
-      box-shadow: 0 0 20px rgba(182,255,50,0.2);
-    }
-    .journey-ladder {
-      margin-top: 1.5rem;
-      border-left: 1px solid rgba(182,255,50,0.25);
-      padding-left: 1.25rem;
-    }
-    .journey-ladder li {
-      list-style: none;
-      margin-bottom: 0.75rem;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-    .journey-ladder li span { color: var(--neon); font-weight: 500; margin-right: 0.5rem; }
-
-    /* Discover */
-    #discover .discover-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-    @media (max-width: 768px) {
-      #discover .discover-grid { grid-template-columns: 1fr; }
-    }
-    .work-tile {
-      aspect-ratio: 1;
-      border-radius: var(--radius-md);
-      background: var(--panel);
-      border: 1px solid rgba(255,255,255,0.06);
-      position: relative;
-      overflow: hidden;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-    }
-    .work-tile::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 30%, rgba(182,255,50,0.12), transparent 60%);
-    }
-    .work-tile .meta {
-      position: relative;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    /* Pro */
-    #pro .compare {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    @media (max-width: 768px) {
-      #pro .compare { grid-template-columns: 1fr; }
-    }
-    .tier {
-      padding: 2rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(5,11,26,0.4);
-    }
-    .tier.pro {
-      border-color: rgba(182,255,50,0.35);
-      box-shadow: 0 0 48px rgba(182,255,50,0.08);
-    }
-    .tier h3 { margin-bottom: 0.5rem; }
-    .tier .price-note { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.25rem; font-style: italic; }
-    .tier ul { list-style: none; }
-    .tier li {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      font-size: 0.9rem;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-    .tier li span.val { color: var(--text); font-weight: 500; }
-
-    /* CTA */
-    #cta {
-      min-height: 70vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 5rem 1rem;
-    }
-    #cta .cta-inner { max-width: 560px; }
-    #cta h2 { margin-bottom: 1rem; }
-    #cta p { color: var(--muted); margin-bottom: 2rem; font-size: 1.05rem; }
-    .store-badge {
-      display: inline-block;
-      padding: 0.9rem 1.8rem;
-      border-radius: 12px;
-      background: #000;
-      border: 1px solid rgba(255,255,255,0.2);
+      background: linear-gradient(180deg, var(--accent-dark), color-mix(in srgb, var(--accent-dark) 85%, #000));
       color: #fff;
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
+      box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-dark) 35%, transparent);
     }
-    .store-badge:hover { border-color: var(--neon); text-decoration: none; }
+    [data-theme="dark"] .btn-primary {
+      background: linear-gradient(180deg, #caff5c, var(--accent));
+      color: #0b0f12;
+      box-shadow: 0 12px 32px rgba(182, 255, 50, 0.2);
+    }
+    .btn-primary:hover { transform: translateY(-1px); text-decoration: none; }
 
-    footer {
-      padding: 2rem 1.5rem 3rem;
-      text-align: center;
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
+    .btn-ghost {
+      background: var(--card);
+      border-color: var(--border);
+      color: var(--text);
+      box-shadow: var(--shadow-soft);
+    }
+    .btn-ghost:hover { transform: translateY(-1px); text-decoration: none; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1.5rem, 4vw, 2.75rem);
+      align-items: center;
+    }
+    @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+
+    .collage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      align-items: start;
+    }
+    .collage .wide { grid-column: 1 / -1; }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 960px) {
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .steps-grid { grid-template-columns: 1fr; }
     }
 
-    /* anim hooks */
-    .will-animate { will-change: transform, opacity; }
+    .step-card { padding: 1rem; display: flex; flex-direction: column; gap: 0.65rem; }
+    .step-card img { margin-top: 0.25rem; }
+
+    .why-lines {
+      max-width: 720px;
+    }
+    .why-lines p {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.45rem, 3vw, 2.05rem);
+      line-height: 1.25;
+      margin-bottom: 0.85rem;
+      color: var(--text);
+    }
+
+    .masonry {
+      columns: 3;
+      column-gap: 0.85rem;
+    }
+    .masonry figure {
+      break-inside: avoid;
+      margin: 0 0 0.85rem;
+    }
+    @media (max-width: 860px) { .masonry { columns: 2; } }
+    @media (max-width: 520px) { .masonry { columns: 1; } }
+
+    .pro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+    @media (max-width: 800px) { .pro-grid { grid-template-columns: 1fr; } }
+
+    .check-list {
+      list-style: none;
+      display: grid;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+    .check-list li {
+      display: flex;
+      gap: 0.55rem;
+      align-items: flex-start;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+    .check-list li::before {
+      content: "";
+      width: 18px; height: 18px;
+      border-radius: 6px;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+      background: color-mix(in srgb, var(--accent) 35%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent-dark) 45%, transparent);
+      box-shadow: 0 0 12px var(--glow);
+    }
+
+    .faq {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    details.faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      background: var(--card);
+      margin-bottom: 0.65rem;
+      box-shadow: var(--shadow-soft);
+    }
+    details.faq-item summary {
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+    }
+    details.faq-item summary::-webkit-details-marker { display: none; }
+
+    .footer {
+      padding: 2.5rem 0 2rem;
+      border-top: 1px solid var(--border);
+      background: color-mix(in srgb, var(--bg-panel) 55%, var(--bg-page));
+    }
+    .footer-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem 2rem;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .reveal-child { will-change: transform, opacity; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal-child { opacity: 1 !important; transform: none !important; }
+      .btn:hover, .icon-btn:hover { transform: none; }
+    }
+
+    .skip-link:focus {
+      left: 0.75rem;
+      top: 0.75rem;
+      width: auto;
+      height: auto;
+      padding: 0.5rem 0.85rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      z-index: 2000;
+      clip: auto;
+      overflow: visible;
+    }
   </style>
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="hud-line top"></div>
-  <div class="hud-line bottom"></div>
+  <a class="skip-link" href="#main" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" data-i18n="a11y.skip">Skip to content</a>
 
   <header class="site-nav">
-    <div class="logo">OvO</div>
-    <nav class="nav-links" aria-label="Section links">
-      <a href="#create">Create</a>
-      <a href="#inscription">Inscribe</a>
-      <a href="#mint">Mint</a>
-      <a href="#gift">Gift</a>
-      <a href="#identity">Card</a>
-      <a href="#discover">Discover</a>
-      <a href="#pro">Pro</a>
-    </nav>
+    <a class="brand" href="#top" id="top">
+      <img src="assets/OvO_Icon_1024-fa43e3f6-d833-46f9-88c3-7e661bb48115.png" width="36" height="36" alt="OvO" />
+      <span>OvO</span>
+    </a>
+    <div class="nav-main">
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#what" data-i18n="nav.what">What is OvO</a>
+        <a href="#how" data-i18n="nav.how">How it works</a>
+        <a href="#why" data-i18n="nav.why">Why it matters</a>
+        <a href="#card" data-i18n="nav.card">Card</a>
+        <a href="#discover" data-i18n="nav.discover">Discover</a>
+        <a href="#pro" data-i18n="nav.pro">Pro</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+      </nav>
+      <div class="pill-row" role="group" aria-label="Language">
+        <button type="button" class="pill-btn" id="lang-en" aria-pressed="true">EN</button>
+        <button type="button" class="pill-btn" id="lang-zh" aria-pressed="false">中文</button>
+      </div>
+      <button type="button" class="icon-btn" id="theme-toggle" aria-label="Toggle color theme" title="Theme">
+        <span id="theme-icon" aria-hidden="true">🌙</span>
+      </button>
+    </div>
   </header>
 
-  <main>
-    <!-- 1. Hero -->
-    <section id="hero" class="section-pin">
-      <div class="wrap hero-grid">
-        <div class="hud-card black-card-mock hero-card will-animate" id="heroCard">
-          <span class="corner-bracket tl"></span>
-          <span class="corner-bracket tr"></span>
-          <span class="corner-bracket bl"></span>
-          <span class="corner-bracket br"></span>
-          <div class="card-header">
-            <span>Fest ID · Live</span>
-            <span style="color:var(--neon)">●</span>
-          </div>
-          <div class="showcase-strip" id="showcaseStrip">
-            <div class="showcase-dots" aria-hidden="true">
-              <span class="active"></span><span></span><span></span><span></span><span></span>
-            </div>
-          </div>
-          <div class="badge-row">
-            <span class="badge-pill">First Inscription</span>
-            <span class="badge-pill">Proven Journey</span>
-            <span class="badge-pill">Minted 12</span>
-          </div>
-        </div>
-        <div class="hero-copy">
-          <p class="eyebrow will-animate" id="heroEyebrow">iOS · Social–creative</p>
-          <h1 class="will-animate" id="heroTitle">Wear what you make.</h1>
-          <p class="sub will-animate" id="heroSub">Mint bead art. Inscribe the back. Carry it on your Black Card — then gift the object, not a screenshot.</p>
+  <main id="main">
+    <section class="hero wrap" id="hero">
+      <div class="hero-grid">
+        <div class="reveal-child">
+          <p class="eyebrow" data-i18n="hero.kicker">Bead art you can mint, keep, and gift.</p>
+          <h1 style="margin: 0.65rem 0 1rem;" data-i18n="hero.title">Create it. Keep it. Gift it.</h1>
+          <p class="muted" style="font-size: 1.05rem; max-width: 46ch;" data-i18n="hero.sub">OvO is a bead art app where your work becomes something you can mint, keep, show, and gift forward.</p>
           <div class="cta-row">
-            <a class="btn btn-primary" href="#cta">Get OvO</a>
-            <a class="btn btn-ghost" href="#create">See the craft</a>
+            <a class="btn btn-primary" href="https://apps.apple.com/us/app/ovo-cyber-beads/id6760381108" rel="noopener noreferrer" target="_blank" data-i18n="hero.cta1">Download on the App Store</a>
+            <a class="btn btn-ghost" href="#how" data-i18n="hero.cta2">See how it works</a>
+          </div>
+        </div>
+        <div class="hero-visual-wrap reveal-child">
+          <div class="hero-glow" aria-hidden="true"></div>
+          <div class="card-surface hero-phone">
+            <img
+              class="device-shot"
+              src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.05-4ba22331-2ce0-4b66-ba21-aa433e230f32.png"
+              alt="OvO card and identity screen"
+              width="1206"
+              height="2622"
+            />
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 2. Create -->
-    <section id="create">
-      <div class="wrap">
-        <p class="eyebrow" style="margin-bottom:0.75rem">Chapter 02</p>
-        <h2 style="margin-bottom:1rem">Two kinds of truth.</h2>
-        <p class="lead" style="margin-bottom:2.5rem">Cyber beads for screen-native expression. Perler mode for physical-faithful grids. Same archive. Same mint.</p>
-        <div class="split-sticky" id="createSplit">
-          <div class="hud-card mode-card cyber will-animate create-a">
-            <div>
-              <div class="mode-label">Cyber beads</div>
-              <h3 style="color:var(--neon);margin-bottom:0.5rem">Digital-native craft</h3>
-              <p style="color:var(--muted);font-size:0.95rem">Free-form color, MARD palette, and Pro-only FX materials — glow, pulse, sparkle, rainbow pulse — for beads that breathe on glass.</p>
-            </div>
-            <div class="mini-grid cyber" aria-hidden="true">
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-            </div>
-            <span class="eyebrow" style="opacity:0.6">Expression first</span>
-          </div>
-          <div class="hud-card mode-card perler will-animate create-b">
-            <div>
-              <div class="mode-label">Perler beads</div>
-              <h3 style="color:var(--cyan);margin-bottom:0.5rem">Physical fidelity</h3>
-              <p style="color:var(--muted);font-size:0.95rem">Reference grids, blueprints, and studio-grade canvas tools — so what you bead IRL matches what you mint in OvO.</p>
-            </div>
-            <div class="mini-grid perler" aria-hidden="true">
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-            </div>
-            <span class="eyebrow" style="opacity:0.6">Craft first</span>
-          </div>
-        </div>
-        <p style="text-align:center;margin-top:2rem"><a class="btn btn-ghost" href="#cta">Start free</a></p>
-      </div>
-    </section>
-
-    <!-- 3. Inscription -->
-    <section id="inscription" class="section-pin">
-      <div class="wrap">
-        <p class="eyebrow" style="margin-bottom:0.75rem;text-align:center">Chapter 03</p>
-        <h2 style="text-align:center;margin-bottom:0.5rem">Give it a meaning.</h2>
-        <p class="lead" style="margin:0 auto 2rem;text-align:center">MintNote locks a creator note to the piece — permanent, filtered, emotionally real.</p>
-        <div class="hud-card mint-sheet will-animate" id="mintSheet">
-          <h2 style="font-size:1.25rem">Mint note</h2>
-          <p class="hint">This note stays with the piece — even after it travels.</p>
-          <div class="field">
-            <label for="noteField">Creator note (max 150)</label>
-            <textarea id="noteField" readonly>Held together by late nights and neon — for you when the set ends.</textarea>
-            <div class="char-count">142 / 150</div>
-          </div>
-          <div class="pull-quote">“Tracer-green on void-black: the inscription is the back of the piece.”</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. Mint -->
-    <section id="mint">
-      <div class="mint-stage" id="mintStage">
-        <div class="wrap" style="text-align:center">
-          <p class="eyebrow" style="margin-bottom:0.75rem">Chapter 04</p>
-          <h2 style="margin-bottom:1rem">Mint — the line between messing around<br />and meaning it.</h2>
-          <p class="mint-copy" id="mintCopy">Draft lives in your studio. Mint commits it to your archive as a durable object with metadata and cloud status.</p>
-        </div>
-        <div class="status-track" id="statusTrack">
-          <div class="status-node" data-state="draft">Draft</div>
-          <div class="status-node" data-state="minting">Minting</div>
-          <div class="status-node" data-state="owned">Owned</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. Gift -->
-    <section id="gift">
-      <div class="wrap gift-timeline">
-        <p class="eyebrow" style="margin-bottom:0.75rem">Chapter 05</p>
-        <h2 style="margin-bottom:1rem">Send the object, not a screenshot.</h2>
-        <p class="lead" style="margin-bottom:0">Gifting is ceremonial: pending transfer → inbox → accept. Creator signature remains on the record.</p>
-        <div class="gift-steps" id="giftSteps">
-          <div class="gift-step will-animate gs-1">
-            <div class="step-num">01</div>
-            <strong>Choose</strong>
-            Pick a minted work you own — sendable inventory, no pending outbound.
-          </div>
-          <div class="gift-step will-animate gs-2">
-            <div class="step-num">02</div>
-            <strong>Confirm</strong>
-            Hub → Send Gift. Backend opens a transfer doc; piece moves toward sent.
-          </div>
-          <div class="gift-step will-animate gs-3">
-            <div class="step-num">03</div>
-            <strong>Pending</strong>
-            Recipient sees it in Received — ownership still in flight.
-          </div>
-          <div class="gift-step will-animate gs-4">
-            <div class="step-num">04</div>
-            <strong>Accepted</strong>
-            Holder updates; creatorUid and inscription stay visible — always.
-          </div>
-        </div>
-        <div class="provenance will-animate" id="provenanceBlock">
-          <div><span>Creator</span><em>Immutable note &amp; ID</em></div>
-          <div><span>Owner</span><em>Transferable hold</em></div>
-          <div><span>Not</span><em>Blockchain jargon — just memory</em></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. Identity -->
-    <section id="identity" class="section-pin">
-      <div class="wrap id-layout">
-        <div class="hud-card will-animate" id="idCard" style="padding:2rem">
-          <span class="corner-bracket tl"></span><span class="corner-bracket tr"></span>
-          <div class="card-header"><span>My Card · Dark</span><span style="color:var(--neon)">HUD</span></div>
-          <div class="showcase-carousel-mock" id="carouselMock">Showcase carousel</div>
-          <div class="badge-grid">
-            <div class="b highlight">First<br />Inscription</div>
-            <div class="b">Scene<br />Weaver</div>
-            <div class="b">Gift<br />Runner</div>
-            <div class="b">Archive<br />Open</div>
-          </div>
-          <ul class="journey-ladder">
-            <li><span>J01</span> First Inscription — mint your voice into the object.</li>
-            <li><span>J02</span> Proven Journey — days active &amp; badges stack.</li>
-            <li><span>J03–J10</span> Living archive — long-term belonging, not one-night usage.</li>
-          </ul>
-        </div>
+    <section class="panel-section" id="what">
+      <div class="wrap split reveal">
         <div>
-          <p class="eyebrow" style="margin-bottom:0.75rem">Chapter 06</p>
-          <h2 style="margin-bottom:1rem">Be seen without becoming noise.</h2>
-          <p class="lead" style="max-width:none">Black Card is your portrait: showcase slots, badge strip, fest-forward chrome — identity wrapped around objects you minted, not endless Stories.</p>
-          <p style="margin-top:1.25rem;color:var(--muted);font-size:0.95rem">Free: 3 showcase slots · 5 badges on card. Pro: 5 showcase · 10 badges — more room for the arc.</p>
+          <h2 style="margin-bottom: 0.75rem;" data-i18n="what.title">Not just a drawing app</h2>
+          <p class="muted" style="font-size: 1.02rem; max-width: 48ch;" data-i18n="what.body">OvO brings bead art, identity, and gifting together. You can create on a grid, mint your work into a collectible piece, attach a permanent note, and pass it on without losing its story.</p>
+        </div>
+        <div class="collage reveal-child">
+          <figure class="wide card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.21-ac97985b-fd14-4367-b438-2ab958499110.png" alt="Perler bead grid editor" width="1206" height="2622" />
+          </figure>
+          <figure class="card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.37.40-f0700cab-0cbc-4ee1-aac8-baf9f09c6de2.png" alt="Gift exchange confirmation" width="1206" height="2622" />
+          </figure>
+          <figure class="card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.14-f23f1a44-41c1-4ea7-ae69-b473410a1a3e.png" alt="Discover work detail" width="1206" height="2622" />
+          </figure>
         </div>
       </div>
     </section>
 
-    <!-- 7. Discover -->
-    <section id="discover">
-      <div class="wrap">
-        <p class="eyebrow" style="margin-bottom:0.75rem">Chapter 07</p>
-        <h2 style="margin-bottom:1rem">Discover objects &amp; their authors.</h2>
-        <p class="lead" style="margin-bottom:0;max-width:none">Featured creators, public grid, search, saved &amp; liked lists — likes, saves, and imports read as respect metrics. Import-locked references honor lineage: re-mint by default stays off.</p>
-        <div class="discover-grid" id="discoverGrid">
-          <div class="work-tile will-animate"><div class="meta"><span>Public work</span><span>♥ 240</span></div></div>
-          <div class="work-tile will-animate"><div class="meta"><span>Featured</span><span>↗ 48</span></div></div>
-          <div class="work-tile will-animate"><div class="meta"><span>Creator</span><span>★ 112</span></div></div>
+    <section id="how">
+      <div class="wrap reveal">
+        <h2 style="text-align:center;margin-bottom:0.35rem;" data-i18n="how.title">How OvO works</h2>
+        <div class="steps-grid">
+          <article class="card-surface step-card reveal-child">
+            <h3 data-i18n="how.create.title">Create</h3>
+            <p class="muted" style="font-size:0.92rem;" data-i18n="how.create.body">Use cyber beads or perler-style grids to design your work with precision and personality.</p>
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.21-ac97985b-fd14-4367-b438-2ab958499110.png" alt="" width="1206" height="2622" />
+          </article>
+          <article class="card-surface step-card reveal-child">
+            <h3 data-i18n="how.inscribe.title">Inscribe</h3>
+            <p class="muted" style="font-size:0.92rem;" data-i18n="how.inscribe.body">Add a creator note that stays with the piece and makes it feel personal.</p>
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.40.47-b17e2391-cb26-45b5-8e54-88f5639ca699.png" alt="" width="1206" height="2622" />
+          </article>
+          <article class="card-surface step-card reveal-child">
+            <h3 data-i18n="how.mint.title">Mint</h3>
+            <p class="muted" style="font-size:0.92rem;" data-i18n="how.mint.body">Minting moves your work from draft to a collectible object in your archive.</p>
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.14-f23f1a44-41c1-4ea7-ae69-b473410a1a3e.png" alt="" width="1206" height="2622" />
+          </article>
+          <article class="card-surface step-card reveal-child">
+            <h3 data-i18n="how.gift.title">Gift</h3>
+            <p class="muted" style="font-size:0.92rem;" data-i18n="how.gift.body">Gift it to someone else while keeping the creator, the meaning, and the journey attached.</p>
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.37.40-f0700cab-0cbc-4ee1-aac8-baf9f09c6de2.png" alt="" width="1206" height="2622" />
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- 8. Pro -->
+    <section class="panel-section" id="why">
+      <div class="wrap reveal">
+        <h2 style="margin-bottom:1.25rem;" data-i18n="why.title">Digital art usually disappears</h2>
+        <div class="why-lines reveal-child">
+          <p data-i18n="why.line1">Screenshots get lost.</p>
+          <p data-i18n="why.line2">Posts get buried.</p>
+          <p data-i18n="why.line3">OvO helps your work keep its meaning, its maker, and its journey.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="card">
+      <div class="wrap split reveal">
+        <div class="reveal-child">
+          <h2 style="margin-bottom:0.75rem;" data-i18n="card.title">Your identity, not just your profile</h2>
+          <p class="muted" style="font-size:1.02rem;max-width:48ch;" data-i18n="card.body">Show what you made. Show what you received. Show your badges, your journey, and your favorite pieces on your OvO card.</p>
+        </div>
+        <div class="collage reveal-child">
+          <figure class="wide card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.05-4ba22331-2ce0-4b66-ba21-aa433e230f32.png" alt="OvO identity card" width="1206" height="2622" />
+          </figure>
+          <figure class="card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.41-7cc51fac-6fc7-4556-90f0-8d67ae3c25de.png" alt="Badges and journey" width="1206" height="2622" />
+          </figure>
+          <figure class="card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.34-ad651bef-b5ce-440f-8622-684d8cea6eaf.png" alt="Hub and Pro" width="1206" height="2622" />
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-section" id="discover">
+      <div class="wrap reveal">
+        <div class="split" style="margin-bottom:1.25rem;">
+          <h2 data-i18n="discover.title">Discover creators and collections</h2>
+          <p class="muted" style="font-size:1.02rem;max-width:48ch;" data-i18n="discover.body">Explore public works, featured creators, saved pieces, and community collections. OvO is built around objects and people, not endless noise.</p>
+        </div>
+        <div class="masonry reveal-child">
+          <figure class="card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.14-f23f1a44-41c1-4ea7-ae69-b473410a1a3e.png" alt="Community work detail" width="1206" height="2622" />
+          </figure>
+          <figure class="card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.05-4ba22331-2ce0-4b66-ba21-aa433e230f32.png" alt="Profile and showcase" width="1206" height="2622" />
+          </figure>
+          <figure class="card-surface" style="padding:0.5rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.21-ac97985b-fd14-4367-b438-2ab958499110.png" alt="Creation tools" width="1206" height="2622" />
+          </figure>
+        </div>
+      </div>
+    </section>
+
     <section id="pro">
-      <div class="wrap">
-        <p class="eyebrow" style="margin-bottom:0.75rem">Chapter 08</p>
-        <h2 style="margin-bottom:0.5rem">Pro — bigger stage, living materials.</h2>
-        <p class="lead" style="margin-bottom:2rem;max-width:none">7-day trial while eligible. Pro unlocks large canvases (40–60), FX beads, collections, higher daily gifts, image→beads — depth, scale, spectacle.</p>
-        <div class="compare">
-          <div class="tier">
-            <h3>Free</h3>
-            <p class="price-note">Fully real. Maker-first baseline.</p>
-            <ul>
-              <li><span>Canvas</span><span class="val">30×30</span></li>
-              <li><span>Saved works</span><span class="val">Up to 100</span></li>
-              <li><span>Showcase</span><span class="val">3 slots</span></li>
-              <li><span>Gifts / day</span><span class="val">3</span></li>
-              <li><span>FX beads</span><span class="val">—</span></li>
-              <li><span>Folders</span><span class="val">0</span></li>
+      <div class="wrap reveal">
+        <div class="pro-grid">
+          <div class="reveal-child">
+            <h2 style="margin-bottom:0.5rem;" data-i18n="pro.title">More room to create</h2>
+            <p class="muted" style="font-size:1.02rem;max-width:46ch;" data-i18n="pro.sub">Go further with larger canvases, special effects, better collection tools, and more ways to express yourself.</p>
+            <ul class="check-list">
+              <li data-i18n="pro.f1">Canvas size</li>
+              <li data-i18n="pro.f2">FX beads</li>
+              <li data-i18n="pro.f3">Collection tools</li>
+              <li data-i18n="pro.f4">Gifts per day</li>
             </ul>
           </div>
-          <div class="tier pro">
-            <h3>Pro</h3>
-            <p class="price-note">More room to finish the idea. Beads that breathe.</p>
-            <ul>
-              <li><span>Canvas</span><span class="val">40–60</span></li>
-              <li><span>Saves</span><span class="val">Unlimited</span></li>
-              <li><span>Showcase</span><span class="val">5 slots</span></li>
-              <li><span>Gifts / day</span><span class="val">99</span></li>
-              <li><span>FX beads</span><span class="val">Glow · Pulse · Sparkle</span></li>
-              <li><span>Image → Beads</span><span class="val">Pro</span></li>
-            </ul>
-          </div>
+          <figure class="card-surface reveal-child" style="padding:0.65rem;margin:0;">
+            <img class="device-shot" loading="lazy" src="assets/Simulator_Screenshot_-_iPhone_17_Pro_Max_-_2026-04-16_at_21.36.34-ad651bef-b5ce-440f-8622-684d8cea6eaf.png" alt="OvO Pro in the Hub" width="1206" height="2622" />
+          </figure>
         </div>
       </div>
     </section>
 
-    <!-- 9. CTA -->
-    <section id="cta">
-      <div class="cta-inner will-animate" id="ctaBlock">
-        <p class="eyebrow" style="margin-bottom:0.75rem">Closing</p>
-        <h2>Download OvO</h2>
-        <p>Mint · Inscribe · Gift · Hold · Showcase — circulation with memory, on your iPhone.</p>
-        <a class="store-badge" href="https://apps.apple.com" target="_blank" rel="noopener noreferrer">Download on the App Store</a>
+    <section class="panel-section" id="faq">
+      <div class="wrap reveal">
+        <h2 style="text-align:center;margin-bottom:1.25rem;" data-i18n="faq.title">FAQ</h2>
+        <div class="faq">
+          <details class="faq-item reveal-child">
+            <summary data-i18n="faq.q1">What is OvO?</summary>
+            <p class="muted" style="margin-top:0.55rem;font-size:0.95rem;" data-i18n="faq.a1">OvO is a bead art app where you can create, mint, collect, display, and gift digital bead works.</p>
+          </details>
+          <details class="faq-item reveal-child">
+            <summary data-i18n="faq.q2">Does the note stay with the piece?</summary>
+            <p class="muted" style="margin-top:0.55rem;font-size:0.95rem;" data-i18n="faq.a2">Yes. The creator note is designed to stay with the piece as part of its identity.</p>
+          </details>
+          <details class="faq-item reveal-child">
+            <summary data-i18n="faq.q3">Can I gift my work to someone else?</summary>
+            <p class="muted" style="margin-top:0.55rem;font-size:0.95rem;" data-i18n="faq.a3">Yes. Gifting is a core part of OvO. The work can move, while its story stays attached.</p>
+          </details>
+          <details class="faq-item reveal-child">
+            <summary data-i18n="faq.q4">What do I get with Pro?</summary>
+            <p class="muted" style="margin-top:0.55rem;font-size:0.95rem;" data-i18n="faq.a4">Pro gives you larger canvases, special effect beads, stronger collection tools, and more creative freedom.</p>
+          </details>
+          <details class="faq-item reveal-child">
+            <summary data-i18n="faq.q5">Where can I join the community?</summary>
+            <p class="muted" style="margin-top:0.55rem;font-size:0.95rem;" data-i18n-html="faq.a5"></p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="final">
+      <div class="wrap card-surface reveal" style="padding:clamp(1.75rem,4vw,2.5rem); text-align:center;">
+        <h2 class="reveal-child" style="margin-bottom:0.65rem;" data-i18n="final.title">Start creating with OvO</h2>
+        <p class="muted reveal-child" style="font-size:1.05rem;max-width:46ch;margin:0 auto;" data-i18n="final.body">Make something you want to keep. Make something worth gifting.</p>
+        <div class="cta-row reveal-child" style="justify-content:center;margin-top:1.25rem;">
+          <a class="btn btn-primary" href="https://apps.apple.com/us/app/ovo-cyber-beads/id6760381108" rel="noopener noreferrer" target="_blank" data-i18n="final.cta1">Download OvO</a>
+          <a class="btn btn-ghost" href="https://discord.gg/Enr9d4XpYe" rel="noopener noreferrer" target="_blank" data-i18n="final.cta2">Join Discord</a>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer>
-    <p>OvO — Neon HUD · Acid green · Black glass · Not a sticker app.</p>
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom:0.35rem;">
+          <img src="assets/OvO_Icon_1024-fa43e3f6-d833-46f9-88c3-7e661bb48115.png" width="28" height="28" alt="" />
+          <span>OvO</span>
+        </div>
+        <p data-i18n="footer.tag">Bead art with identity—minted, kept, and gifted.</p>
+      </div>
+      <div>
+        <p style="font-weight:600;color:var(--text);margin-bottom:0.35rem;" data-i18n="footer.contactLabel">Support</p>
+        <a href="mailto:bonistudio.core@gmail.com">bonistudio.core@gmail.com</a>
+      </div>
+      <div>
+        <p style="font-weight:600;color:var(--text);margin-bottom:0.35rem;" data-i18n="footer.linksLabel">Links</p>
+        <p><a href="https://apps.apple.com/us/app/ovo-cyber-beads/id6760381108" rel="noopener noreferrer" target="_blank" data-i18n="footer.appStore">App Store</a> · <a href="https://discord.gg/Enr9d4XpYe" rel="noopener noreferrer" target="_blank" data-i18n="footer.discord">Discord</a></p>
+      </div>
+    </div>
   </footer>
 
   <script>
-    gsap.registerPlugin(ScrollTrigger);
+    (function () {
+      var DISCORD_URL = "https://discord.gg/Enr9d4XpYe";
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    function initAnimations() {
-      if (prefersReduced) return;
-
-      // Hero: pin + scale card + fade copy
-      const heroTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: "#hero",
-          start: "top top",
-          end: "+=120%",
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1
+      var translations = {
+        en: {
+          pageTitle: "OvO — Create it. Keep it. Gift it.",
+          metaDescription: "OvO is a bead art app where your work becomes something you can mint, keep, show, and gift forward.",
+          a11y: { skip: "Skip to content" },
+          nav: { what: "What is OvO", how: "How it works", why: "Why it matters", card: "Card", discover: "Discover", pro: "Pro", faq: "FAQ" },
+          hero: {
+            kicker: "Bead art you can mint, keep, and gift.",
+            title: "Create it. Keep it. Gift it.",
+            sub: "OvO is a bead art app where your work becomes something you can mint, keep, show, and gift forward.",
+            cta1: "Download on the App Store",
+            cta2: "See how it works"
+          },
+          what: {
+            title: "Not just a drawing app",
+            body: "OvO brings bead art, identity, and gifting together. You can create on a grid, mint your work into a collectible piece, attach a permanent note, and pass it on without losing its story."
+          },
+          how: {
+            title: "How OvO works",
+            create: { title: "Create on a bead grid", body: "Use cyber beads or perler-style grids to design your work with precision and personality." },
+            inscribe: { title: "Give it a meaning", body: "Add a creator note that stays with the piece and makes it feel personal." },
+            mint: { title: "Turn it into a real piece", body: "Minting moves your work from draft to a collectible object in your archive." },
+            gift: { title: "Send it forward", body: "Gift it to someone else while keeping the creator, the meaning, and the journey attached." }
+          },
+          why: {
+            title: "Digital art usually disappears",
+            line1: "Screenshots get lost.",
+            line2: "Posts get buried.",
+            line3: "OvO helps your work keep its meaning, its maker, and its journey."
+          },
+          card: {
+            title: "Your identity, not just your profile",
+            body: "Show what you made. Show what you received. Show your badges, your journey, and your favorite pieces on your OvO card."
+          },
+          discover: {
+            title: "Discover creators and collections",
+            body: "Explore public works, featured creators, saved pieces, and community collections. OvO is built around objects and people, not endless noise."
+          },
+          pro: {
+            title: "More room to create",
+            sub: "Go further with larger canvases, special effects, better collection tools, and more ways to express yourself.",
+            f1: "Canvas size",
+            f2: "FX beads",
+            f3: "Collection tools",
+            f4: "Gifts per day"
+          },
+          faq: {
+            title: "FAQ",
+            q1: "What is OvO?",
+            a1: "OvO is a bead art app where you can create, mint, collect, display, and gift digital bead works.",
+            q2: "Does the note stay with the piece?",
+            a2: "Yes. The creator note is designed to stay with the piece as part of its identity.",
+            q3: "Can I gift my work to someone else?",
+            a3: "Yes. Gifting is a core part of OvO. The work can move, while its story stays attached.",
+            q4: "What do I get with Pro?",
+            a4: "Pro gives you larger canvases, special effect beads, stronger collection tools, and more creative freedom.",
+            q5: "Where can I join the community?",
+            a5: 'You can join the OvO Discord community <a href="' + DISCORD_URL + '" rel="noopener noreferrer" target="_blank">here</a>.'
+          },
+          final: {
+            title: "Start creating with OvO",
+            body: "Make something you want to keep. Make something worth gifting.",
+            cta1: "Download OvO",
+            cta2: "Join Discord"
+          },
+          footer: {
+            tag: "Bead art with identity—minted, kept, and gifted.",
+            contactLabel: "Support",
+            linksLabel: "Links",
+            appStore: "App Store",
+            discord: "Discord"
+          }
+        },
+        zh: {
+          pageTitle: "OvO — 创作它，留下它，送出它。",
+          metaDescription: "OvO 是一个拼豆创作 app。你的作品不只是画完就结束，它可以被铭记、被展示、被收藏，也可以送给别人。",
+          a11y: { skip: "跳到正文" },
+          nav: { what: "什么是 OvO", how: "如何运作", why: "为什么重要", card: "身份卡片", discover: "发现", pro: "Pro", faq: "常见问题" },
+          hero: {
+            kicker: "拼豆作品，可铭记、可收藏、可赠送。",
+            title: "创作它，留下它，送出它。",
+            sub: "OvO 是一个拼豆创作 app。你的作品不只是画完就结束，它可以被铭记、被展示、被收藏，也可以送给别人。",
+            cta1: "前往 App Store 下载",
+            cta2: "看看它如何运作"
+          },
+          what: {
+            title: "不只是一个画图工具",
+            body: "OvO 把拼豆创作、身份表达和赠送机制放进了同一个产品里。你可以在网格上创作作品，把它铸成可收藏的数字作品，写下一段会被保留的文字，再把它送给别人，同时不丢失它的故事。"
+          },
+          how: {
+            title: "OvO 如何运作",
+            create: { title: "在拼豆网格上创作", body: "用数字拼豆或贴近实体拼豆的网格方式，把作品一点点做出来。" },
+            inscribe: { title: "写下属于它的意义", body: "加入一段会留在作品上的文字，让它不只是图案，而有了情绪和记忆。" },
+            mint: { title: "把它变成真正的作品", body: "Mint 会让作品从草稿进入收藏状态，成为你作品库里真正的一件作品。" },
+            gift: { title: "把它送给别人", body: "你可以把作品送给别人，同时保留创作者、意义和流转轨迹。" }
+          },
+          why: {
+            title: "大多数数字作品都会被淹没",
+            line1: "截图会消失。",
+            line2: "帖子会被淹没。",
+            line3: "OvO 让作品留下意义、留下创作者，也留下它走过的路径。"
+          },
+          card: {
+            title: "这不只是个人资料，而是你的身份展示",
+            body: "展示你创作过的作品。展示你收到过的礼物。把你的 badge、journey 和最喜欢的作品放进自己的 OvO 卡片。"
+          },
+          discover: {
+            title: "发现创作者，也发现他们的作品收藏",
+            body: "你可以浏览公开作品、创作者页面、收藏内容和社区里的优秀作品。OvO 围绕作品和创作者展开，而不是围绕无尽的信息噪音。"
+          },
+          pro: {
+            title: "让创作更自由一点",
+            sub: "更大的画布，更多特效，更完整的收藏能力，让你有更大的表达空间。",
+            f1: "画布尺寸",
+            f2: "特效拼豆",
+            f3: "收藏工具",
+            f4: "每日赠送次数"
+          },
+          faq: {
+            title: "常见问题",
+            q1: "OvO 是什么？",
+            a1: "OvO 是一个拼豆创作 app，你可以在里面创作、mint、收藏、展示和赠送数字拼豆作品。",
+            q2: "写下的文字会保留在作品上吗？",
+            a2: "会。创作者写下的文字会作为作品身份的一部分被保留。",
+            q3: "我可以把作品送给别人吗？",
+            a3: "可以。赠送是 OvO 的核心功能之一。作品可以流转，但它的故事会被保留下来。",
+            q4: "Pro 会多出什么？",
+            a4: "Pro 会带来更大的画布、特效拼豆、更完整的收藏工具和更大的创作自由度。",
+            q5: "我可以去哪里加入社区？",
+            a5: '你可以通过<a href="' + DISCORD_URL + '" rel="noopener noreferrer" target="_blank">这里</a>加入 OvO 的 Discord 社区。'
+          },
+          final: {
+            title: "开始用 OvO 创作吧",
+            body: "做出你想留下的作品。做出值得送给别人的作品。",
+            cta1: "下载 OvO",
+            cta2: "加入 Discord"
+          },
+          footer: {
+            tag: "有身份的拼豆作品——可 mint、可收藏、可赠送。",
+            contactLabel: "支持",
+            linksLabel: "链接",
+            appStore: "App Store",
+            discord: "Discord"
+          }
         }
-      });
-      heroTl
-        .to("#heroCard", { scale: 1.06, y: -12, duration: 1, ease: "none" }, 0)
-        .to("#heroTitle", { opacity: 0.35, y: -40, duration: 1, ease: "none" }, 0)
-        .to("#heroSub", { opacity: 0.2, y: -20, duration: 1, ease: "none" }, 0)
-        .to("#heroEyebrow", { opacity: 0.5, duration: 1, ease: "none" }, 0);
+      };
 
-      // Create: stagger rise
-      gsap.from(".create-a, .create-b", {
-        scrollTrigger: { trigger: "#createSplit", start: "top 75%", toggleActions: "play none none reverse" },
-        y: 56,
-        opacity: 0,
-        duration: 0.9,
-        stagger: 0.15,
-        ease: "power3.out"
-      });
-
-      // Inscription sheet
-      gsap.from("#mintSheet", {
-        scrollTrigger: { trigger: "#inscription", start: "top 70%", end: "center center", scrub: 1 },
-        y: 80,
-        opacity: 0.3,
-        scale: 0.96,
-        ease: "none"
-      });
-
-      // Mint: pin section + timeline active states
-      const nodes = gsap.utils.toArray(".status-node");
-      ScrollTrigger.create({
-        trigger: "#mint",
-        start: "top top",
-        end: "+=180%",
-        pin: true,
-        scrub: 0.5,
-        onUpdate: (self) => {
-          const p = self.progress;
-          let idx = 0;
-          if (p >= 0.66) idx = 2;
-          else if (p >= 0.33) idx = 1;
-          nodes.forEach((n, i) => n.classList.toggle("active", i === idx));
+      function getByPath(obj, path) {
+        var parts = path.split(".");
+        var cur = obj;
+        for (var i = 0; i < parts.length; i++) {
+          if (cur == null) return "";
+          cur = cur[parts[i]];
         }
+        return typeof cur === "string" ? cur : "";
+      }
+
+      var currentLang = localStorage.getItem("ovo-lang") || "en";
+
+      function applyLang(lang) {
+        currentLang = lang;
+        localStorage.setItem("ovo-lang", lang);
+        document.documentElement.lang = lang === "zh" ? "zh-Hans" : "en";
+        var pack = lang === "zh" ? translations.zh : translations.en;
+
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          var key = el.getAttribute("data-i18n");
+          var val = getByPath(pack, key);
+          if (!val) return;
+          if (el.tagName === "TITLE") {
+            document.title = val;
+            return;
+          }
+          if (el.tagName === "META" && el.getAttribute("name") === "description") {
+            el.setAttribute("content", val);
+            return;
+          }
+          el.textContent = val;
+        });
+
+        document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+          var key = el.getAttribute("data-i18n-html");
+          var val = getByPath(pack, key);
+          if (val) el.innerHTML = val;
+        });
+
+        document.getElementById("lang-en").setAttribute("aria-pressed", lang === "en" ? "true" : "false");
+        document.getElementById("lang-zh").setAttribute("aria-pressed", lang === "zh" ? "true" : "false");
+      }
+
+      document.getElementById("lang-en").addEventListener("click", function () { applyLang("en"); });
+      document.getElementById("lang-zh").addEventListener("click", function () { applyLang("zh"); });
+
+      var root = document.documentElement;
+      var storedTheme = localStorage.getItem("ovo-theme");
+      if (storedTheme === "dark" || storedTheme === "light") {
+        root.setAttribute("data-theme", storedTheme);
+      } else {
+        root.setAttribute("data-theme", "light");
+      }
+
+      function syncThemeUi() {
+        var dark = root.getAttribute("data-theme") === "dark";
+        document.getElementById("theme-icon").textContent = dark ? "☀️" : "🌙";
+        document.getElementById("theme-toggle").setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+      }
+
+      document.getElementById("theme-toggle").addEventListener("click", function () {
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("ovo-theme", next);
+        syncThemeUi();
       });
 
-      gsap.from("#mintCopy", {
-        scrollTrigger: { trigger: "#mint", start: "top 40%", end: "+=40%", scrub: 1 },
-        opacity: 0.4,
-        y: 30,
-        ease: "none"
-      });
+      syncThemeUi();
+      applyLang(currentLang);
 
-      // Gift steps timeline
-      gsap.from(".gift-step", {
-        scrollTrigger: { trigger: "#giftSteps", start: "top 80%", end: "top 40%", scrub: 1 },
-        y: 40,
-        opacity: 0,
-        stagger: 0.12,
-        ease: "none"
-      });
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
 
-      gsap.from("#provenanceBlock", {
-        scrollTrigger: { trigger: "#provenanceBlock", start: "top 85%", toggleActions: "play none none reverse" },
-        scale: 0.94,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.out"
-      });
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // Identity card parallax
-      gsap.to("#idCard", {
-        scrollTrigger: { trigger: "#identity", start: "top bottom", end: "bottom top", scrub: 1 },
-        y: -30,
-        rotateX: 2,
-        transformPerspective: 1000,
-        ease: "none"
-      });
+        if (!reduce) {
+          gsap.from(".hero .reveal-child", {
+            opacity: 0,
+            y: 26,
+            duration: 0.85,
+            stagger: 0.12,
+            ease: "power2.out",
+            delay: 0.08
+          });
 
-      gsap.from("#carouselMock", {
-        scrollTrigger: { trigger: "#identity", start: "top 60%", scrub: 1 },
-        backgroundPosition: "200% 0%",
-        ease: "none"
-      });
+          gsap.utils.toArray("section .reveal-child").forEach(function (el) {
+            if (el.closest("#hero")) return;
+            gsap.from(el, {
+              scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none reverse" },
+              opacity: 0,
+              y: 22,
+              duration: 0.65,
+              ease: "power2.out"
+            });
+          });
 
-      // Discover tiles
-      gsap.from("#discoverGrid .work-tile", {
-        scrollTrigger: { trigger: "#discoverGrid", start: "top 85%", toggleActions: "play none none reverse" },
-        y: 50,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.12,
-        ease: "power2.out"
-      });
-
-      // Pro tiers
-      gsap.from(".tier", {
-        scrollTrigger: { trigger: "#pro .compare", start: "top 78%", toggleActions: "play none none reverse" },
-        y: 60,
-        opacity: 0,
-        stagger: 0.2,
-        duration: 0.85,
-        ease: "power3.out"
-      });
-
-      // CTA
-      gsap.from("#ctaBlock", {
-        scrollTrigger: { trigger: "#cta", start: "top 75%", toggleActions: "play none none reverse" },
-        scale: 0.92,
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: "power3.out"
-      });
-
-      // Nav highlight (optional subtle)
-      ScrollTrigger.refresh();
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initAnimations);
-    } else {
-      initAnimations();
-    }
+          var heroImg = document.querySelector(".hero-phone img");
+          if (heroImg) {
+            gsap.to(heroImg, {
+              y: 18,
+              ease: "none",
+              scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: 1.1 }
+            });
+          }
+        }
+      }
+    })();
   </script>
 </body>
 </html>
